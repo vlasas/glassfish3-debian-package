@@ -32,12 +32,12 @@ task debian() << {
   ant.deb(destfile: "build/glassfish3-${glassfishVersion}.deb",
       control: 'src/debian/config', verbose: 'true') {
 
-    tarfileset(dir: 'src/debian/bin', prefix: '/etc/init.d', filemode: '755', username: 'glassfish', group: 'glassfish')
+    tarfileset(dir: 'src/debian/bin', prefix: '/etc/init.d', filemode: '755', username: 'root', group: 'root')
     tarfileset(dir: 'src/debian/etc', prefix: '/etc/default', includes: 'glassfish3', filemode: '600', username: 'glassfish', group: 'glassfish')
     tarfileset(dir: 'src/debian/etc', prefix: '/etc/glassfish3', includes: 'passfile.txt', filemode: '600', username: 'glassfish', group: 'glassfish')
 
     // finally include the whole Glassfish release
-    tarfileset(dir: "work/glassfish3", prefix: "/usr/share/glassfish3", username: 'glassfish', group: 'glassfish')
+    tarfileset(dir: "work/glassfish3", prefix: "/usr/share/glassfish3", username: 'root', group: 'root')
   }
 
 }

@@ -1,13 +1,44 @@
 #!/bin/sh
 
 #
-# Init script for the JavaEE Glassfish3 server
+# /etc/init.d/glassfish3 -- startup script for the JavaEE Glassfish3 server
 #
+### BEGIN INIT INFO
+# Provides:          glassfish3
+# Required-Start:    $local_fs $remote_fs $network
+# Required-Stop:     $local_fs $remote_fs $network
+# Should-Start:      $named
+# Should-Stop:       $named
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start Glassfish.
+# Description:       Start the JavaEE Glassfish3 server
+### END INIT INFO
+
+set -e
 
 GF3_HOME=/usr/share/glassfish3/glassfish
+DOMAINS_HOME=/var/lib/glassfish3
 USER=glassfish
 
 LOGS_DIR=/var/log/glassfish3
+
+if [ `id -u` -ne 0 ]; then
+        echo "You need root privileges to run this script"
+        exit 1
+fi
+
+# Make sure tomcat is started with system locale
+if [ -r /etc/default/locale ]; then
+        . /etc/default/locale
+        export LANG
+fi
+
+. /lib/lsb/init-functions
+
+if [ -r /etc/default/rcS ]; then
+        . /etc/default/rcS
+fi
 
 # load the glassfish3 configuration file
 . /etc/default/glassfish3
@@ -59,9 +90,9 @@ case "$ACTION" in
   create-domain)
     sudo -u $USER $GF3_HOME/bin/asadmin --user $ADMIN_USER --passwordfile $PASSWORD_FILE create-domain --adminport $ADMIN_PORT --savemasterpassword=true --savelogin=false --checkports=true --nopassword=false $DOMAIN_NAME
 
-    sudo rm -rf $GF3_HOME/glassfish/domains/$DOMAIN_NAME/logs
+    sudo rm -rf $DOMAINS_HOME/$DOMAIN_NAME/logs
     sudo -u $USER mkdir -p $LOGS_DIR/$DOMAIN_NAME
-    sudo -u $USER ln -s $LOGS_DIR/$DOMAIN_NAME $GF3_HOME/domains/$DOMAIN_NAME/logs
+    sudo -u $USER ln -s $LOGS_DIR/$DOMAIN_NAME $DOMAINS_HOME/$DOMAIN_NAME/logs
 
     sudo -u $USER $GF3_HOME/bin/asadmin --user $ADMIN_USER --passwordfile $PASSWORD_FILE start-domain $DOMAIN_NAME
     sudo -u $USER $GF3_HOME/bin/asadmin --user $ADMIN_USER --passwordfile $PASSWORD_FILE --host localhost --port $ADMIN_PORT enable-secure-admin

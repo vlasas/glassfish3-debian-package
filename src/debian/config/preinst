@@ -1,6 +1,7 @@
 #!/bin/sh
 
 GF3_HOME=/usr/share/glassfish3
+DOMAINS_HOME=/var/lib/glassfish3
 USER=glassfish
 
 #
@@ -10,5 +11,5 @@ USER=glassfish
 #
 if [ -z "$(getent passwd $USER)" ]; then
   echo "creating the user and group '$USER'"
-  sudo adduser --system --group --home $GF3_HOME $USER
+  sudo adduser --system --group --home $DOMAINS_HOME $USER
 fi

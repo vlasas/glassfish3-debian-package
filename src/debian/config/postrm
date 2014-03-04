@@ -3,8 +3,12 @@
 GF3_HOME=/usr/share/glassfish3
 USER=glassfish
 
-DOMAINS_HOME=/var/glassfish3
+DOMAINS_HOME=/var/lib/glassfish3
 LOGS_DIR=/var/log/glassfish3
+
+if [ "$1" = "purge" ] ; then
+  update-rc.d glassfish3 remove >/dev/null
+fi
 
 if [ -d "$DOMAINS_HOME" ]; then
   echo "removing domains directory"

@@ -3,7 +3,7 @@
 GF3_HOME=/usr/share/glassfish3
 USER=glassfish
 
-DOMAINS_HOME=/var/glassfish3
+DOMAINS_HOME=/var/lib/glassfish3
 LOGS_DIR=/var/log/glassfish3
 
 if [ "$GF3_HOME/glassfish/bin" ]; then
@@ -13,13 +13,18 @@ fi
 if [ ! -d "$LOGS_DIR" ]; then
   echo "creating log directory '$LOGS_DIR'"
   sudo mkdir -p $LOGS_DIR
-  sudo chown $USER:$USER $LOGS_DIR
+  sudo chown $USER:adm $LOGS_DIR
 fi
 
 if [ ! -d "$DOMAINS_HOME" ]; then
   echo "creating domains directory '$DOMAINS_HOME'"
   sudo mkdir -p $DOMAINS_HOME
   sudo chown $USER:$USER $DOMAINS_HOME
-  sudo -u $USER ln -s $DOMAINS_HOME $GF3_HOME/glassfish/domains
 fi
 
+sudo ln -s $DOMAINS_HOME $GF3_HOME/glassfish/domains
+
+if [ -x "/etc/init.d/glassfish3" ]; then
+  update-rc.d glassfish3 defaults 92 08 >/dev/null
+#  invoke-rc.d glassfish3 start || true
+fi
